@@ -5,26 +5,23 @@ const api = axios.create({
   withCredentials: true,
 });
 
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
-
+// Response interceptor: handle 401 with cookie-based refresh
 api.interceptors.response.use(
   res => res,
   async err => {
-    if (err.response?.status === 401 && !err.config._retry) {
-      err.config._retry = true;
+    const originalRequest = err.config;
+    if (err.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
       try {
-        const res = await axios.post('https://api.naroapp.net/api/auth/refresh', 
-          {}, { withCredentials: true });
-        localStorage.setItem('token', res.data.accessToken);
-        err.config.headers.Authorization = `Bearer ${res.data.accessToken}`;
-        return api(err.config);
+        // Refresh uses httpOnly cookies automatically (withCredentials: true)
+        await api.post('/api/auth/refresh');
+        // Retry the original request — new cookies are set automatically
+        return api(originalRequest);
       } catch {
-        localStorage.removeItem('token');
-        window.location.href = '/login';
+        // Refresh failed — session expired, redirect to login
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(err);

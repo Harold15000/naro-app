@@ -19,11 +19,20 @@ export const LoginScreen: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const res = await api.post('/api/auth/login', { email, password });
-      await login(res.data.accessToken);
+      // POST login sets httpOnly cookies automatically
+      await api.post('/api/auth/login', { email, password });
+      // Fetch user data using the cookie that was just set
+      const { data } = await api.get('/api/auth/me');
+      login(data);
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
+      const resp = err.response?.data;
+      // Backend may return { message: "..." }, { error: "..." }, or { errors: [...] }
+      const msg = resp?.message
+        || resp?.error
+        || (Array.isArray(resp?.errors) ? resp.errors.join('. ') : null)
+        || 'Error al iniciar sesion';
+      setError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -33,13 +42,13 @@ export const LoginScreen: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md bg-surface border border-border rounded-[20px] p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-8">
-          <img 
-            src="https://i.ibb.co/wNv7cYHq/logo-png.png" 
-            alt="Naro Logo" 
+          <img
+            src="https://i.ibb.co/wNv7cYHq/logo-png.png"
+            alt="Naro Logo"
             className="w-24 h-24 object-contain mb-4 drop-shadow-[0_0_15px_rgba(240,61,127,0.3)]"
             referrerPolicy="no-referrer"
           />
-          <p className="text-text-secondary mt-2 text-center">Inicia sesión para continuar</p>
+          <p className="text-text-secondary mt-2 text-center">Inicia sesion para continuar</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -55,7 +64,7 @@ export const LoginScreen: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">Contraseña</label>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Contrasena</label>
             <input
               type="password"
               value={password}
@@ -73,14 +82,14 @@ export const LoginScreen: React.FC = () => {
             disabled={isLoading}
             className="w-full bg-naro-gradient text-white font-bold rounded-xl py-3.5 mt-6 hover:opacity-90 transition-opacity disabled:opacity-50 flex justify-center items-center"
           >
-            {isLoading ? <LoadingSpinner size={20} className="text-white" /> : 'Iniciar sesión'}
+            {isLoading ? <LoadingSpinner size={20} className="text-white" /> : 'Iniciar sesion'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <span className="text-text-secondary text-sm">¿No tienes cuenta? </span>
+          <span className="text-text-secondary text-sm">No tienes cuenta? </span>
           <Link to="/register" className="text-naro-pink hover:underline text-sm font-medium">
-            Regístrate
+            Registrate
           </Link>
         </div>
       </div>

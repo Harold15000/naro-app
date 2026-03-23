@@ -27,15 +27,21 @@ export const RegisterScreen: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await api.post('/api/auth/register', { 
-        username, 
-        email, 
-        password, 
-        invitation_code: invitationCode 
+      await api.post('/api/auth/register', {
+        username,
+        email,
+        password,
+        invitation_code: invitationCode
       });
       navigate('/login');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al registrarse');
+      const resp = err.response?.data;
+      // Backend may return { message: "..." }, { error: "..." }, or { errors: [...] }
+      const msg = resp?.message
+        || resp?.error
+        || (Array.isArray(resp?.errors) ? resp.errors.join('. ') : null)
+        || 'Error al registrarse';
+      setError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -45,14 +51,14 @@ export const RegisterScreen: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 py-12">
       <div className="w-full max-w-md bg-surface border border-border rounded-[20px] p-8 shadow-2xl">
         <div className="flex flex-col items-center mb-8">
-          <img 
-            src="https://i.ibb.co/wNv7cYHq/logo-png.png" 
-            alt="Naro Logo" 
+          <img
+            src="https://i.ibb.co/wNv7cYHq/logo-png.png"
+            alt="Naro Logo"
             className="w-24 h-24 object-contain mb-4 drop-shadow-[0_0_15px_rgba(240,61,127,0.3)]"
             referrerPolicy="no-referrer"
           />
           <h1 className="text-3xl font-bold tracking-tight">Crear cuenta</h1>
-          <p className="text-text-secondary mt-2 text-center">Únete a naro hoy</p>
+          <p className="text-text-secondary mt-2 text-center">Unete a naro hoy</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -79,7 +85,7 @@ export const RegisterScreen: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">Contraseña</label>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Contrasena</label>
             <input
               type="password"
               value={password}
@@ -90,15 +96,15 @@ export const RegisterScreen: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">Código de invitación (Opcional)</label>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Codigo de invitacion (Opcional)</label>
             <input
               type="text"
               value={invitationCode}
               onChange={(e) => setInvitationCode(e.target.value)}
               className="w-full bg-background border border-border rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-naro-pink transition-all"
-              placeholder="Código"
+              placeholder="Codigo"
             />
-            <p className="text-xs text-text-secondary mt-1">Pídele el código a tu tutor</p>
+            <p className="text-xs text-text-secondary mt-1">Pidele el codigo a tu tutor</p>
           </div>
 
           <ErrorMessage message={error} />
@@ -113,9 +119,9 @@ export const RegisterScreen: React.FC = () => {
         </form>
 
         <div className="mt-6 text-center">
-          <span className="text-text-secondary text-sm">¿Ya tienes cuenta? </span>
+          <span className="text-text-secondary text-sm">Ya tienes cuenta? </span>
           <Link to="/login" className="text-naro-pink hover:underline text-sm font-medium">
-            Inicia sesión
+            Inicia sesion
           </Link>
         </div>
       </div>

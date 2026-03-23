@@ -8,9 +8,9 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string) => Promise<void>;
+  login: (user: User) => void;
   logout: () => Promise<void>;
-  loadUser: () => Promise<void>;
+  checkAuth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,36 +20,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  const loadUser = async () => {
+  const checkAuth = async () => {
     try {
       const res = await api.get('/api/auth/me');
       setUser(res.data);
-      socket.auth = { token: localStorage.getItem('token') };
       socket.connect();
-    } catch (err) {
+    } catch {
       setUser(null);
-      localStorage.removeItem('token');
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      loadUser();
-    } else {
-      setIsLoading(false);
-    }
+    checkAuth();
 
     return () => {
       socket.disconnect();
     };
   }, []);
 
-  const login = async (token: string) => {
-    localStorage.setItem('token', token);
-    await loadUser();
+  const login = (userData: User) => {
+    setUser(userData);
+    socket.connect();
   };
 
   const logout = async () => {
@@ -58,7 +51,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (err) {
       console.error('Logout error', err);
     } finally {
-      localStorage.removeItem('token');
       setUser(null);
       socket.disconnect();
       navigate('/login');
@@ -66,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, loadUser }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, checkAuth }}>
       {children}
     </AuthContext.Provider>
   );

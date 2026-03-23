@@ -38,8 +38,8 @@ export const Layout: React.FC = () => {
             className="w-9 h-9 rounded-full bg-surface-high border border-border overflow-hidden cursor-pointer"
             onClick={() => navigate('/profile')}
           >
-            {user?.avatar_url ? (
-              <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            {user?.profile_photo_url ? (
+              <img src={user.profile_photo_url} alt="Avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-naro-gradient opacity-80">
                 <span className="text-sm font-bold text-white">{user?.username?.charAt(0).toUpperCase()}</span>
