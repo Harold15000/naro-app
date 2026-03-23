@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #080808;
+  --color-surface: #0D0D10;
+  --color-surface-high: #111116;
+  --color-border: #1E1E26;
+  --color-text-primary: #F8F8F8;
+  --color-text-secondary: #6B6B80;
+  --color-naro-pink: #F03D7F;
+  --color-naro-purple: #7B3FE4;
+  --color-naro-blue: #4D9FFF;
+  --color-naro-green: #10B981;
+  --color-naro-red: #EF4444;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text-primary font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    /* IE and Edge */
+    -ms-overflow-style: none;
+    /* Firefox */
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 1rem);
+  }
+}
+
+.bg-naro-gradient {
+  background: linear-gradient(135deg, #F03D7F, #7B3FE4, #4D9FFF);
+}
+
+.text-naro-gradient {
+  background: linear-gradient(135deg, #F03D7F, #7B3FE4, #4D9FFF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

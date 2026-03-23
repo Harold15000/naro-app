@@ -1,0 +1,8 @@
+{
+  "name": "Naro App",
+  "description": "App de videollamadas 1v1 privadas entre usuarios y streamers con economía de diamonds y coins.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
