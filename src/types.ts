@@ -3,7 +3,9 @@ export interface User {
   username: string;
   email: string;
   role: 'user' | 'streamer' | 'tutor' | 'agency' | 'super_admin';
-  avatar_url?: string;
+  is_verified?: boolean;
+  kyc_level?: number;
+  profile_photo_url?: string | null;
 }
 
 export interface WalletBalance {

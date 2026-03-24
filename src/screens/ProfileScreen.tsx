@@ -16,8 +16,8 @@ export const ProfileScreen: React.FC = () => {
       <div className="flex flex-col items-center mt-8 mb-10">
         <div className="w-32 h-32 rounded-full bg-naro-gradient p-1 mb-4 shadow-[0_0_30px_rgba(240,61,127,0.3)]">
           <div className="w-full h-full rounded-full bg-surface-high overflow-hidden border-4 border-background flex items-center justify-center">
-            {user.avatar_url ? (
-              <img src={user.avatar_url} alt={user.username} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            {user.profile_photo_url ? (
+              <img src={user.profile_photo_url} alt={user.username} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             ) : (
               <span className="text-5xl font-bold text-white">{user.username.charAt(0).toUpperCase()}</span>
             )}
